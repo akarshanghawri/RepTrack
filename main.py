@@ -12,5 +12,10 @@ def index() :
 def profile() :
     return render_template("profile.html")
 
+@main.route('/stats')
+@login_required
+def stats():
+    return render_template("stats.html")
+
 # @main.route('/new')
 # @login_required
