@@ -10,21 +10,24 @@ def create_app() :
     app = Flask(__name__, instance_relative_config=True)
 
     app.config.from_mapping(
-    SECRET_KEY="secretKey",
-    SQLALCHEMY_DATABASE_URI="sqlite:///db.sqlite")
+        SECRET_KEY="secretKey",
+        SQLALCHEMY_DATABASE_URI="sqlite:///db.sqlite"
+    )
 
     db.init_app(app)
     login_manager.init_app(app)
+    login_manager.login_view = "auth.login"   # redirect if not logged in
 
-    from . import models
-
+    from . import models                # ensures models are registered before create_all()
     from .main import main as main_blueprint
-    app.register_blueprint(main_blueprint)
-
     from .auth import auth as auth_blueprint
+
+    app.register_blueprint(main_blueprint)
     app.register_blueprint(auth_blueprint)
 
     return app
+
+
 
 from .models import User
 
