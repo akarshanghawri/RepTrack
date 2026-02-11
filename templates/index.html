@@ -1,8 +1,55 @@
-{% extends 'base.html' %} 
+{% extends 'base.html' %}
 {% block title %} Home {% endblock %}
 
 {% block content %}
 
-<h1>Welcome to Pushups Logger</h1>
+
+{% if not workouts %}
+<div class="text-center mt-5">
+    <h4>No workouts added yet</h4>
+    <p class="text-muted">Start tracking your progress today</p>
+    <a href="{{ url_for('main.add_workout') }}" class="btn btn-success mt-3">
+        Add Your First Workout
+    </a>
+</div>
+
+{% else %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Your Workouts</h2>
+    <a href="{{ url_for('main.add_workout') }}" class="btn btn-primary">
+        + Add Workout
+    </a>
+</div>
+
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>Date</th>
+            <th>Reps</th>
+            <th>Sets</th>
+            <th>Notes</th>
+            <th style="width:150px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for workout in workouts %}
+        <tr>
+            <td>{{ workout.date }}</td>
+            <td>{{ workout.reps }}</td>
+            <td>{{ workout.sets }}</td>
+            <td>{{ workout.comment }}</td>
+            <td>
+                <a href="{{ url_for('main.edit_workout', id=workout.id) }}" class="btn btn-sm btn-warning">Edit</a>
+
+                <a href="{{ url_for('main.delete_workout', id=workout.id) }}" class="btn btn-sm btn-danger"
+                    onclick="return confirm('Are you sure?')">
+                    Delete
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
 
 {% endblock %}
