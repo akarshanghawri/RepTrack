@@ -1,7 +1,8 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-import os 
 from flask_login import LoginManager
+from flask_migrate import Migrate
+import os 
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -14,11 +15,19 @@ def create_app() :
         SQLALCHEMY_DATABASE_URI="sqlite:///db.sqlite"
     )
 
+    # Initialize extensions
     db.init_app(app)
     login_manager.init_app(app)
-    login_manager.login_view = "auth.login"   # redirect if not logged in
+    login_manager.login_view = "auth.login"             # redirect if not logged in
+    Migrate(app,db)
 
-    from . import models                # ensures models are registered before create_all()
+    from .models import User
+
+    @login_manager.user_loader                          # register user loader
+    def load_user(user_id):
+        return User.query.get(int(user_id))
+    
+    # Register blueprints
     from .main import main as main_blueprint
     from .auth import auth as auth_blueprint
 
@@ -28,9 +37,3 @@ def create_app() :
     return app
 
 
-
-from .models import User
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))

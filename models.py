@@ -14,6 +14,7 @@ class User(UserMixin, db.Model) :
 class Workout(db.Model) :
     id = db.Column(db.Integer, primary_key=True)
     reps = db.Column(db.Integer, nullable=False)
+    sets = db.Column(db.Integer, nullable=False)
     date = db.Column(db.Date, nullable=False)
     comment = db.Column(db.Text, nullable=False)
 
