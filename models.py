@@ -16,6 +16,6 @@ class Workout(db.Model) :
     reps = db.Column(db.Integer, nullable=False)
     sets = db.Column(db.Integer, nullable=False)
     date = db.Column(db.Date, nullable=False)
-    comment = db.Column(db.Text, nullable=False)
+    comment = db.Column(db.Text)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)

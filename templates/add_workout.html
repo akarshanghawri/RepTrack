@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %} Add Workout {% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+
+        <div class="card p-4">
+            <h3 class="mb-3">Add Workout</h3>
+
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label">Reps</label>
+                    <input type="number" name="reps" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Sets</label>
+                    <input type="number" name="sets" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Comment</label>
+                    <input type="text" name="comment" class="form-control">
+                </div>
+
+                <button type="submit" class="btn btn-success w-100">
+                    Save Workout
+                </button>
+            </form>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
