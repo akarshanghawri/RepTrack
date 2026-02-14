@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, url_for, redirect, request, flash
 from flask_login import login_required, current_user
 from .models import User,Workout
-from datetime import date
+from datetime import date, datetime
 from .import db
 
 main = Blueprint('main', __name__)
@@ -19,16 +19,20 @@ def add_workout() :
         reps = request.form.get('reps')
         sets = request.form.get('sets')
         comment = request.form.get('comment')
+        date = request.form.get('date')
 
         if not reps or not sets :
             flash("Reps and Sets are required")
             return redirect(url_for('main.add_workout'))
         
+        if not comment :
+            comment = "-"
+        
         workout = Workout(
             reps = reps,
             sets = sets,
             comment = comment,
-            date = date.today(),
+            date = datetime.strptime(date, "%Y-%m-%d").date(),
             user_id = current_user.id
         )
 
