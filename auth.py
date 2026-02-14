@@ -20,7 +20,7 @@ def signup() :
         print(username, password)
 
         if not email or not username or not password:
-            flash("All fields are required")
+            flash("All fields are required", "danger")
             return redirect(url_for('auth.signup'))
 
         try :
@@ -34,11 +34,9 @@ def signup() :
         # IntegrityError - when a database operation violates a constraint such as UNIQUE, NOT NULL, or FOREIGN KEY
         except IntegrityError :         
             db.session.rollback()
-            flash("Username or email already exists")
+            flash("Username or email already exists","danger")
             return redirect(url_for('auth.signup'))
     
-
-
     return render_template("signup.html") 
 
 @auth.route('/login', methods=['GET', 'POST'])
@@ -53,9 +51,10 @@ def login() :
 
         if not user or not check_password_hash(user.password, password) :
             # print(user, password)
-            flash("invalid username or password")
+            flash("invalid username or password", "danger")
             return redirect(url_for('auth.login'))
         
+        flash("You have been logged in", "success")
         login_user(user, remember=bool(remember))
         return redirect(url_for('main.index'))
 
@@ -65,6 +64,6 @@ def login() :
 @login_required
 def logout() :
     logout_user()
-    flash("You have been logged out")
+    flash("You have been logged out","success")
     return redirect(url_for('auth.login'))
 

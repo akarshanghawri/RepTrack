@@ -22,7 +22,7 @@ def add_workout() :
         date = request.form.get('date')
 
         if not reps or not sets :
-            flash("Reps and Sets are required")
+            flash("Reps and Sets are required","danger")
             return redirect(url_for('main.add_workout'))
         
         if not comment :
@@ -57,7 +57,7 @@ def edit_workout(id) :
         workout.date = datetime.strptime(workout_date, "%Y-%m-%d").date()
 
         db.session.commit()
-        flash("Workout updated successfully")
+        flash("Workout updated successfully", "success")
 
         return redirect(url_for('main.index'))
 
