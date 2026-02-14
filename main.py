@@ -43,10 +43,25 @@ def add_workout() :
 
     return render_template("add_workout.html")
 
-@main.route('/edit/<int:id>')
+@main.route('/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_workout(id) :
-    return
+    workout = Workout.query.get_or_404(id)
+
+    if request.method == 'POST' :
+        workout.reps = request.form.get('reps')
+        workout.sets = request.form.get('sets')
+        workout.comment = request.form.get('comment')
+
+        workout_date = request.form.get('date')
+        workout.date = datetime.strptime(workout_date, "%Y-%m-%d").date()
+
+        db.session.commit()
+        flash("Workout updated successfully")
+
+        return redirect(url_for('main.index'))
+
+    return render_template('edit_workout.html', workout = workout)
 
 @main.route('/delete/<int:id>')
 @login_required

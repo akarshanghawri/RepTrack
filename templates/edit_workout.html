@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %} Edit workout {% endblock %}
+
+{% block content %}
+
+<form method="POST">
+    <div class="mb-3">
+        <label>Reps</label>
+        <input type="number" name="reps" class="form-control" value="{{ workout.reps }}" required>
+    </div>
+
+    <div class="mb-3">
+        <label>Sets</label>
+        <input type="number" name="sets" class="form-control" value="{{ workout.sets }}" required>
+    </div>
+
+    <div class="mb-3">
+        <label>Date</label>
+        <input type="date" name="date" class="form-control" value="{{ workout.date }}">
+    </div>
+
+    <div class="mb-3">
+        <label>Comment</label>
+        <textarea name="comment" class="form-control">{{ workout.comment }}</textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update</button>
+</form>
+
+
+{% endblock %}
