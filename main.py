@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, url_for, redirect, request, flash
 from flask_login import login_required, current_user
+from sqlalchemy import func 
 from .models import User,Workout
 from datetime import date, datetime
 from .import db
@@ -63,10 +64,16 @@ def edit_workout(id) :
 
     return render_template('edit_workout.html', workout = workout)
 
-@main.route('/delete/<int:id>')
+@main.route('/delete/<int:id>', methods=['POST'])
 @login_required
 def delete_workout(id) :
-    return
+    workout = Workout.query.get_or_404(id)
+
+    db.session.delete(workout)
+    db.session.commit()
+
+    flash("Workout Deleted", "success")
+    return redirect(url_for('main.index'))
 
 @main.route('/profile')
 @login_required
