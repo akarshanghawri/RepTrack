@@ -21,6 +21,43 @@ def create_app() :
     login_manager.login_view = "auth.login"             # redirect if not logged in
     Migrate(app,db)
 
+
+    @app.cli.command("seed-exercises")
+    def seed_exercises() :
+        from .models import Exercise
+
+        existing = Exercise.query.filter_by(is_global=True).first()
+
+        if existing :
+            print("Exercises already added")
+            return 
+
+        exercises = [
+            "Push-ups", "Bench Press", "Incline Bench Press",
+            "Decline Bench Press", "Dumbbell Press", "Chest Fly",
+            "Cable Fly", "Chest Dips",
+            "Pull-ups", "Chin-ups", "Lat Pulldown", "Deadlift",
+            "Barbell Row", "Dumbbell Row", "Seated Cable Row",
+            "T-Bar Row", "Face Pull",
+            "Overhead Press", "Arnold Press", "Lateral Raise",
+            "Front Raise", "Rear Delt Fly", "Shrugs",
+            "Squats", "Front Squat", "Leg Press", "Lunges",
+            "Romanian Deadlift", "Leg Curl", "Leg Extension",
+            "Calf Raises", "Bulgarian Split Squat", "Hip Thrust",
+            "Barbell Curl", "Dumbbell Curl", "Hammer Curl",
+            "Preacher Curl", "Tricep Dips", "Tricep Pushdown",
+            "Skull Crushers", "Overhead Tricep Extension",
+            "Plank", "Crunches", "Leg Raises",
+            "Russian Twists", "Hanging Leg Raises", "Cable Crunch"
+        ]
+
+        for name in exercises :
+            exercise = Exercise(name=name, is_global=True)
+            db.session.add(exercise)
+
+        db.session.commit()
+        print("Exercises added")
+
     from .models import User
 
     @login_manager.user_loader                          # register user loader
