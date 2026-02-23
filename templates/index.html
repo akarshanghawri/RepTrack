@@ -27,6 +27,7 @@
             <th>Date</th>
             <th>Reps</th>
             <th>Sets</th>
+            <th>Exercise</th>
             <th>Notes</th>
             <th style="width:150px;">Actions</th>
         </tr>
@@ -37,6 +38,7 @@
             <td>{{ workout.date }}</td>
             <td>{{ workout.reps }}</td>
             <td>{{ workout.sets }}</td>
+            <td>{{ workout.exercise.name }}</td>
             <td>{{ workout.comment }}</td>
             <td>
                 <a href="{{ url_for('main.edit_workout', id=workout.id) }}" class="btn btn-sm btn-info">Edit</a>

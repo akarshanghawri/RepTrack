@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, url_for, redirect, request, flash
 from flask_login import login_required, current_user
 from sqlalchemy import func 
-from .models import User,Workout
+from .models import User,Workout,Exercise
 from datetime import date, datetime
 from .import db
 
@@ -16,11 +16,16 @@ def index() :
 @main.route('/add', methods=['GET', 'POST'])
 @login_required
 def add_workout() :
+    global_exercises = Exercise.query.filter_by(is_global=True).all()
+    user_exercises = Exercise.query.filter_by(user_id = current_user.id).all()
+    exercises = global_exercises + user_exercises
+
     if request.method == 'POST' :
         reps = request.form.get('reps')
         sets = request.form.get('sets')
         comment = request.form.get('comment')
         date = request.form.get('date')
+        exercise_id = request.form.get('exercise_id')
 
         if not reps or not sets :
             flash("Reps and Sets are required","danger")
@@ -34,15 +39,17 @@ def add_workout() :
             sets = sets,
             comment = comment,
             date = datetime.strptime(date, "%Y-%m-%d").date(),
-            user_id = current_user.id
+            user_id = current_user.id,
+            exercise_id = exercise_id
         )
 
         db.session.add(workout)
         db.session.commit()
 
+        flash("Workout added successfully", "success")
         return redirect(url_for('main.index'))
 
-    return render_template("add_workout.html")
+    return render_template("add_workout.html", exercises=exercises)
 
 @main.route('/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
