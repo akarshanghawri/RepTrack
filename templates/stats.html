@@ -3,6 +3,38 @@
 
 {% block content %}
 
-<h1>Stats Block</h1>
+<h2 class="mb-4">Your Stats</h2>
+
+<p><strong>Exercises:</strong> {{ exercise_names }}</p>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div style="max-width: 800px;">
+    <canvas id="workoutChart"></canvas>
+</div>
+
+<script>
+const ctx = document.getElementById('workoutChart').getContext('2d');
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: {{ exercise_names | tojson }},
+        datasets: [{
+            label: 'Total Reps',
+            data: {{ total_reps | tojson }},
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
 
 {% endblock %}

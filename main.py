@@ -90,7 +90,32 @@ def profile() :
 @main.route('/stats')
 @login_required
 def stats():
-    return render_template("stats.html")
+    workouts = Workout.query.filter_by(user_id=current_user.id).all()
+
+    stats = {}
+    for workout in workouts :
+        exercise_name = workout.exercise.name
+
+        if exercise_name not in stats :
+            stats[exercise_name] = {"total_workouts" : 0, "total_reps": 0}
+        
+        stats[exercise_name]["total_workouts"] += 1 
+        stats[exercise_name]["total_reps"] += workout.reps * workout.sets 
+
+    exercise_names = []
+    total_workouts = []
+    total_reps = []
+
+    # print(stats)
+    
+    for name, data in stats.items() :
+        exercise_names.append(name)
+        total_workouts.append(data["total_workouts"])
+        total_reps.append(data["total_reps"])
+    
+
+    return render_template("stats.html", exercise_names=exercise_names,
+                                        total_workouts=total_workouts,total_reps=total_reps)
 
 # @main.route('/new')
 # @login_required
