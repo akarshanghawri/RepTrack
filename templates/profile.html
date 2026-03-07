@@ -1,7 +1,55 @@
 {% extends 'base.html' %}
-
-{% block title %} profile {% endblock %}
+{% block title %}Account – RepTrack{% endblock %}
 
 {% block content %}
-<h1> This is profile page </h1>
+<div class="row justify-content-center mt-2">
+    <div class="col-md-7 fade-up">
+
+        <h1 class="page-heading mb-1">Account</h1>
+        <p class="page-subheading mb-4">Your profile information</p>
+
+        <div class="card p-4">
+            <div class="d-flex align-items-center gap-4 mb-4">
+                <!-- Avatar placeholder -->
+                <div style="
+                    width: 70px; height: 70px;
+                    border-radius: 50%;
+                    background: linear-gradient(135deg, var(--accent), #8b5cf6);
+                    display: flex; align-items: center; justify-content: center;
+                    font-size: 2rem; font-weight: 800; color: #fff;
+                    flex-shrink: 0;">
+                    {{ current_user.username[0] | upper }}
+                </div>
+                <div>
+                    <div style="font-size:1.25rem; font-weight:700; color:var(--text-primary);">
+                        {{ current_user.username }}
+                    </div>
+                    <div style="color:var(--text-muted); font-size:0.875rem;">
+                        {{ current_user.email }}
+                    </div>
+                </div>
+            </div>
+
+            <hr style="border-color: var(--border);">
+
+            <div class="row g-3 mt-1">
+                <div class="col-sm-6">
+                    <div style="color:var(--text-muted); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.3rem;">Username</div>
+                    <div style="color:var(--text-primary); font-weight:500;">{{ current_user.username }}</div>
+                </div>
+                <div class="col-sm-6">
+                    <div style="color:var(--text-muted); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.3rem;">Email</div>
+                    <div style="color:var(--text-primary); font-weight:500;">{{ current_user.email }}</div>
+                </div>
+            </div>
+
+            <div class="mt-4 pt-2" style="border-top: 1px solid var(--border);">
+                <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger btn-sm">
+                    <i class="bi bi-box-arrow-right me-1"></i>Logout
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>
 {% endblock %}

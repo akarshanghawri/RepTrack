@@ -1,44 +1,55 @@
 {% extends 'base.html' %}
-
-{% block title %} Login {% endblock %}
+{% block title %}Login – RepTrack{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-5">
+<div class="row justify-content-center mt-4">
+    <div class="col-md-5 col-sm-10 scale-in">
 
-        <div class="card p-4">
-            <h3 class="text-center mb-3">Login Page</h3>
+        <div class="text-center mb-4">
+            <div style="font-size:2.5rem; margin-bottom:0.5rem;">⚡</div>
+            <h2 class="auth-title">Welcome Back</h2>
+            <p class="auth-subtitle">Log in to continue your fitness journey</p>
+        </div>
 
+        <div class="auth-card">
             <form method="POST">
                 <div class="mb-3">
                     <label class="form-label">Username</label>
-                    <input type="text" class="form-control" name="username" required>
+                    <div class="input-group">
+                        <span class="input-group-text" style="background:var(--bg-elevated);border-color:var(--border-strong);color:var(--text-muted);">
+                            <i class="bi bi-person-fill"></i>
+                        </span>
+                        <input type="text" class="form-control" name="username"
+                               placeholder="your_username" required>
+                    </div>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Password</label>
-                    <input type="password" class="form-control" name="password" required>
+                    <div class="input-group">
+                        <span class="input-group-text" style="background:var(--bg-elevated);border-color:var(--border-strong);color:var(--text-muted);">
+                            <i class="bi bi-lock-fill"></i>
+                        </span>
+                        <input type="password" class="form-control" name="password"
+                               placeholder="••••••••" required>
+                    </div>
                 </div>
-                
-                <div class="form-check mb-3">
+
+                <div class="form-check mb-4">
                     <input class="form-check-input" type="checkbox" name="remember" id="remember">
-                    <label class="form-check-label" for="remember">
-                        Remember me
-                    </label>
+                    <label class="form-check-label" for="remember">Remember me</label>
                 </div>
-                
-                <button type="submit" class="btn btn-primary w-100">
-                    Login
+
+                <button type="submit" class="btn btn-primary w-100" style="padding:0.7rem;">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Login
                 </button>
             </form>
 
-
-            <p class="text-center mt-3">
-                Don't have an account?
-                <a href="{{ url_for('auth.signup') }}">Signup</a>
+            <p class="text-center mt-4 mb-0" style="color:var(--text-muted); font-size:0.875rem;">
+                New here? <a href="{{ url_for('auth.signup') }}" class="auth-link">Create an account</a>
             </p>
-
         </div>
+
     </div>
 </div>
 {% endblock %}
