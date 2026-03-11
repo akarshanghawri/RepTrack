@@ -21,24 +21,28 @@
 
                 <div class="mb-3">
                     <label class="form-label"><i class="bi bi-activity me-1"></i>Exercise</label>
-                    <select name="exercise_id" class="form-select" required>
-                        <option value="">Select an exercise…</option>
-                        {% for exercise in exercises %}
-                            <option value="{{ exercise.id }}">{{ exercise.name }}</option>
-                        {% endfor %}
-                    </select>
+
+                    <input type="text" id="exerciseSearch" class="form-control mb-2" placeholder="Search exercise">
+                </div>
+
+                <div class="list-group" id="exerciseList" style="max-height: 200px; overflow-y:auto; display:none;">
+                    {% for exercise in exercises %}
+                    <button class="list-group-item list-group-item-action exercise-item" data-id="{{ exercise.id }}">
+                        {{ exercise.name }}
+                    </button>
+                    {% endfor %}
+
+                    <input type="hidden" name="exercise_id" id="exercise_id">
                 </div>
 
                 <div class="row g-3 mb-3">
                     <div class="col-6">
                         <label class="form-label"><i class="bi bi-layers me-1"></i>Sets</label>
-                        <input type="number" name="sets" class="form-control"
-                               placeholder="e.g. 4" min="1" required>
+                        <input type="number" name="sets" class="form-control" placeholder="e.g. 4" min="1" required>
                     </div>
                     <div class="col-6">
                         <label class="form-label"><i class="bi bi-arrow-repeat me-1"></i>Reps</label>
-                        <input type="number" name="reps" class="form-control"
-                               placeholder="e.g. 12" min="1" required>
+                        <input type="number" name="reps" class="form-control" placeholder="e.g. 12" min="1" required>
                     </div>
                 </div>
 
@@ -48,9 +52,10 @@
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label"><i class="bi bi-chat-left-text me-1"></i>Notes <span style="color:var(--text-subtle);font-size:0.75rem;">(optional)</span></label>
+                    <label class="form-label"><i class="bi bi-chat-left-text me-1"></i>Notes <span
+                        style="color:var(--text-subtle);font-size:0.75rem;">(optional)</span></label>
                     <input type="text" name="comment" class="form-control"
-                           placeholder="e.g. felt strong today, PR attempt…">
+                        placeholder="e.g. felt strong today, PR attempt…">
                 </div>
 
                 <button type="submit" class="btn btn-success w-100" style="padding:0.7rem;">
@@ -61,4 +66,47 @@
 
     </div>
 </div>
+
+<script>
+    const searchInput = document.getElementById("exerciseSearch")
+    const items = document.querySelectorAll(".exercise-item")
+    const list = document.getElementById("exerciseList")
+    const hiddenInput = document.getElementById("exercise_id")
+
+    searchInput.addEventListener("input", function() {
+        const value = this.value.toLowerCase()
+
+        if (value === ""){
+            list.style.display = "none";
+
+            items.forEach(item => {
+                item.style.display=""
+            });
+
+            return;
+        }
+        
+        list.style.display = "block";
+
+        items.forEach(item => {
+            const text = item.innerText.toLowerCase()
+            item.style.display = text.includes(value) ? "" : "none";
+        })
+
+    })
+
+    items.forEach(item => {
+        item.addEventListener("click", () => {
+            items.forEach(i => i.classList.remove("active"))           
+            item.classList.add("active")
+
+            hiddenInput.value = item.dataset.id
+            searchInput.value = item.innerText
+
+            list.style.display = "none"
+        })
+    })
+
+</script>
+
 {% endblock %}
