@@ -13,13 +13,21 @@ class User(UserMixin, db.Model) :
 
 class Workout(db.Model) :
     id = db.Column(db.Integer, primary_key=True)
-    reps = db.Column(db.Integer, nullable=False)
-    sets = db.Column(db.Integer, nullable=False)
     date = db.Column(db.Date, nullable=False)
     comment = db.Column(db.Text)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     exercise_id = db.Column(db.Integer, db.ForeignKey('exercise.id'), nullable=False)
+
+    sets = db.relationship('WorkoutSet', backref='workout', lazy=True, cascade='all, delete-orphan')
+
+class WorkoutSet(db.Model) :
+    id = db.Column(db.Integer, primary_key=True)
+    set_number = db.Column(db.Integer, nullable=False)
+    reps = db.Column(db.Integer, nullable=False)
+    weight = db.Column(db.Float, nullable=False)
+
+    workout_id = db.Column(db.Integer, db.ForeignKey('workout.id'), nullable=False)
 
 class Exercise(db.Model) :
     id = db.Column(db.Integer, primary_key=True)

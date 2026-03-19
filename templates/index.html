@@ -30,7 +30,6 @@
         <tr>
             <th><i class="bi bi-calendar3 me-1"></i>Date</th>
             <th><i class="bi bi-layers me-1"></i>Sets</th>
-            <th><i class="bi bi-arrow-repeat me-1"></i>Reps</th>
             <th><i class="bi bi-activity me-1"></i>Exercise</th>
             <th><i class="bi bi-chat-left-text me-1"></i>Notes</th>
             <th style="width:140px;">Actions</th>
@@ -40,9 +39,15 @@
         {% for workout in workouts | sort(attribute='date', reverse=True) %}
         <tr>
             <td><span style="color:var(--text-muted); font-size:0.85rem;">{{ workout.date }}</span></td>
-            <td><strong>{{ workout.sets }}</strong></td>
-            <td><strong>{{ workout.reps }}</strong></td>
             <td><span class="badge-exercise">{{ workout.exercise.name }}</span></td>
+            <td>
+                {% for s in workout.sets | sort(attribute='set_number') %}
+                    <span class="badge-exercise" style="margin-right:4px;">
+                        {{ s.reps }}
+                        {% if s.weight %}× {{ s.weight }}kg{% endif %}
+                    </span>
+                {% endfor %}
+            </td>
             <td style="color:var(--text-muted); font-size:0.85rem;">{{ workout.comment }}</td>
             <td class="d-flex gap-2">
                 <a href="{{ url_for('main.edit_workout', id=workout.id) }}"

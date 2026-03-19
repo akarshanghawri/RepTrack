@@ -35,16 +35,21 @@
                     <input type="hidden" name="exercise_id" id="exercise_id">
                 </div>
 
-                <div class="row g-3 mb-3">
-                    <div class="col-6">
-                        <label class="form-label"><i class="bi bi-layers me-1"></i>Sets</label>
-                        <input type="number" name="sets" class="form-control" placeholder="e.g. 4" min="1" required>
-                    </div>
-                    <div class="col-6">
-                        <label class="form-label"><i class="bi bi-arrow-repeat me-1"></i>Reps</label>
-                        <input type="number" name="reps" class="form-control" placeholder="e.g. 12" min="1" required>
+
+                <div id="sets-container" class="mb-3">
+                    <label class="form-label"><i class="bi bi-layers me-1"></i>Sets</label>
+                    
+                    <div class="set-row d-flex gap-2 align-items-center mb-2">
+                        <span style="color:var(--text-muted); font-size:0.85rem; width:55px;">Set 1</span>
+                        <input type="number" name="reps" class="form-control" placeholder="Reps" min="1" required>
+                        <input type="number" name="weight" class="form-control" placeholder="kg" min="0" step="0.5">
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-set">✕</button>
                     </div>
                 </div>
+
+                <button type="button" class="btn btn-sm btn-info mb-4" id="add-set">
+                    <i class="bi bi-plus-lg me-1"></i>Add Set
+                </button>
 
                 <div class="mb-3">
                     <label class="form-label"><i class="bi bi-calendar3 me-1"></i>Date</label>
@@ -106,6 +111,47 @@
             list.style.display = "none"
         })
     })
+
+    const container = document.getElementById('sets-container')
+    const addBtn = document.getElementById('add-set')
+
+    addBtn.addEventListener('click', () => {
+        const rows = container.querySelectorAll('.set-row')
+        const newRow = rows[0].cloneNode(true)
+
+        newRow.querySelector('span').textContent = `Set ${rows.length + 1}`
+
+        newRow.querySelectorAll('input').forEach(input => input.value = '')
+
+        container.appendChild(newRow)
+        updateRemoveButtons()
+    })
+
+    // Remove a set row
+    container.addEventListener('click', (e) => {
+        if (e.target.classList.contains('remove-set')) {
+            e.target.closest('.set-row').remove()
+            renumberSets()
+            updateRemoveButtons()
+        }
+    })
+
+    // Renumber "Set 1", "Set 2" etc after a removal
+    function renumberSets() {
+        container.querySelectorAll('.set-row').forEach((row, i) => {
+            row.querySelector('span').textContent = `Set ${i + 1}`
+        })
+    }
+
+    // Hide remove button when only 1 set remains
+    function updateRemoveButtons() {
+        const rows = container.querySelectorAll('.set-row')
+        rows.forEach(row => {
+            row.querySelector('.remove-set').style.display = rows.length === 1 ? 'none' : ''
+        })
+    }
+
+    updateRemoveButtons() // run on load
 
 </script>
 
