@@ -65,12 +65,27 @@ def edit_workout(id) :
     workout = Workout.query.get_or_404(id)
 
     if request.method == 'POST' :
-        workout.reps = request.form.get('reps')
-        workout.sets = request.form.get('sets')
         workout.comment = request.form.get('comment')
 
         workout_date = request.form.get('date')
         workout.date = datetime.strptime(workout_date, "%Y-%m-%d").date()
+
+        # delete old sets
+        workout.sets.clear()
+        db.session.flush()
+
+        reps_list = request.form.getlist('reps')
+        weights_list = request.form.getlist('weight')
+
+        for i, (reps, weight) in enumerate(zip(reps_list, weights_list)) :
+            if reps :
+                workout_set = WorkoutSet(
+                    set_number = i + 1,
+                    reps = int(reps),
+                    weight = float(weight),
+                    workout_id = workout.id
+                )
+                db.session.add(workout_set)
 
         db.session.commit()
         flash("Workout updated successfully", "success")
@@ -108,7 +123,7 @@ def stats():
             stats[exercise_name] = {"total_workouts" : 0, "total_reps": 0}
         
         stats[exercise_name]["total_workouts"] += 1 
-        
+
         for workout_set in workout.sets:
             stats[exercise_name]["total_reps"] += workout_set.reps
 
