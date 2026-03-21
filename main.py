@@ -1,17 +1,67 @@
 from flask import Blueprint, render_template, url_for, redirect, request, flash
 from flask_login import login_required, current_user
 from sqlalchemy import func 
+from collections import defaultdict
 from .models import User,Workout,Exercise, WorkoutSet
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from .import db
 
 main = Blueprint('main', __name__)
 
 @main.route('/')
 @login_required
-def index() :
-    workouts = Workout.query.filter_by(user_id=current_user.id).all()
-    return render_template("index.html",workouts=workouts)
+def index():
+    workouts = (Workout.query
+                .filter_by(user_id=current_user.id)
+                .order_by(Workout.date.desc())
+                .all())
+
+    # grouping by date 
+    by_date = defaultdict(list)
+    for workout in workouts:
+        by_date[workout.date].append(workout)
+
+    by_week = defaultdict(dict)
+    for date, date_workouts in by_date.items():
+        iso = date.isocalendar()                    
+        week_key = (iso.year, iso.week)                 # isocalendar () - tells the week and year of any date 
+        by_week[week_key][date] = date_workouts
+    
+    sorted_weeks = sorted(by_week.keys(), reverse=True)
+    total_weeks = len(sorted_weeks)
+
+    # pagination by week  
+    page = request.args.get('page', 1, type=int)
+    start = (page - 1) * 1   # 1 week per page
+    current_week_key = sorted_weeks[start] if start < total_weeks else None
+
+    total_pages = total_weeks
+
+    # get the dates for current week 
+    if current_week_key:
+        week_data = dict(sorted(
+            by_week[current_week_key].items(),
+            reverse=True
+        ))
+    else:
+        week_data = {}
+
+    if week_data:
+        any_date = list(week_data.keys())[0]
+        # Monday of this week
+        week_start = any_date - timedelta(days=any_date.weekday())
+        # Sunday is 6 days after Monday
+        week_end = week_start + timedelta(days=6)
+    else:
+        week_start = week_end = None
+
+    return render_template("index.html",
+                           grouped=week_data,
+                           page=page,
+                           total_pages=total_pages,
+                           week_start=week_start,
+                           week_end=week_end,
+                           total_weeks=total_weeks)
 
 @main.route('/add', methods=['GET', 'POST'])
 @login_required
@@ -24,6 +74,10 @@ def add_workout() :
         exercise_id = request.form.get('exercise_id')
         comment = request.form.get('comment') or '-'
         date = request.form.get('date')
+
+        if not exercise_id :
+            flash("Please select an exercise", "danger")
+            return redirect(url_for('main.add_workout'))
 
         reps_list = request.form.getlist('reps')
         weights_list = request.form.getlist('weight')

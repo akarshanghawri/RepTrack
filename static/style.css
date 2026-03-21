@@ -2,42 +2,50 @@
 
 /* ---------- CSS Variables (Design Tokens) ---------- */
 :root {
-  --bg-base:       #0d0f17;
-  --bg-surface:    #161926;
-  --bg-elevated:   #1d2233;
-  --bg-card:       #1a1f30;
+  --bg-base: #0d0f17;
+  --bg-surface: #161926;
+  --bg-elevated: #1d2233;
+  --bg-card: #1a1f30;
 
-  --accent:        #6c63ff;
-  --accent-light:  #8b85ff;
-  --accent-glow:   rgba(108, 99, 255, 0.25);
+  --accent: #6c63ff;
+  --accent-light: #8b85ff;
+  --accent-glow: rgba(108, 99, 255, 0.25);
 
-  --success:       #22c55e;
-  --danger:        #ef4444;
-  --warning:       #f59e0b;
-  --info:          #38bdf8;
+  --success: #22c55e;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --info: #38bdf8;
 
-  --text-primary:  #f0f2ff;
-  --text-muted:    #8b93b0;
-  --text-subtle:   #545c7e;
+  --text-primary: #f0f2ff;
+  --text-muted: #8b93b0;
+  --text-subtle: #545c7e;
 
-  --border:        rgba(255,255,255,0.07);
-  --border-strong: rgba(255,255,255,0.12);
+  --border: rgba(255, 255, 255, 0.07);
+  --border-strong: rgba(255, 255, 255, 0.12);
 
-  --radius-sm:  8px;
-  --radius-md:  12px;
-  --radius-lg:  18px;
-  --radius-xl:  24px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
 
-  --shadow-card: 0 4px 24px rgba(0,0,0,0.45);
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.45);
   --shadow-glow: 0 0 24px var(--accent-glow);
 
   --transition: 0.2s ease;
 }
 
 /* ---------- Reset & Base ---------- */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+}
 
 body {
   background-color: var(--bg-base);
@@ -54,14 +62,18 @@ body::before {
   position: fixed;
   inset: 0;
   background-image:
-    linear-gradient(rgba(108,99,255,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(108,99,255,0.03) 1px, transparent 1px);
+    linear-gradient(rgba(108, 99, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(108, 99, 255, 0.03) 1px, transparent 1px);
   background-size: 40px 40px;
   pointer-events: none;
   z-index: 0;
 }
 
-.container { position: relative; z-index: 1; max-width: 1100px; }
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+}
 
 /* ---------- Navbar ---------- */
 .navbar {
@@ -120,13 +132,15 @@ body::before {
   cursor: pointer;
 }
 
-.btn-primary, .btn-accent {
+.btn-primary,
+.btn-accent {
   background: linear-gradient(135deg, var(--accent), #8b5cf6);
   color: #fff;
   box-shadow: 0 4px 14px var(--accent-glow);
 }
 
-.btn-primary:hover, .btn-accent:hover {
+.btn-primary:hover,
+.btn-accent:hover {
   background: linear-gradient(135deg, var(--accent-light), #a78bfa);
   transform: translateY(-1px);
   box-shadow: 0 6px 20px var(--accent-glow);
@@ -158,13 +172,13 @@ body::before {
 
 .btn-outline-danger {
   background: transparent;
-  border: 1px solid rgba(239,68,68,0.5);
+  border: 1px solid rgba(239, 68, 68, 0.5);
   color: #f87171;
   border-radius: var(--radius-sm);
 }
 
 .btn-outline-danger:hover {
-  background: rgba(239,68,68,0.15);
+  background: rgba(239, 68, 68, 0.15);
   border-color: #ef4444;
   color: #fca5a5;
 }
@@ -221,7 +235,8 @@ body::before {
   margin-bottom: 0.4rem;
 }
 
-.form-control, .form-select {
+.form-control,
+.form-select {
   background: var(--bg-elevated);
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
@@ -231,7 +246,8 @@ body::before {
   transition: border-color var(--transition), box-shadow var(--transition);
 }
 
-.form-control:focus, .form-select:focus {
+.form-control:focus,
+.form-select:focus {
   background: var(--bg-elevated);
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-glow);
@@ -239,11 +255,20 @@ body::before {
   outline: none;
 }
 
-.form-control::placeholder { color: var(--text-subtle); }
+.form-control::placeholder {
+  color: var(--text-subtle);
+}
 
 /* Fix browser date/select dark mode */
-.form-select option { background: var(--bg-elevated); color: var(--text-primary); }
-input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.5; }
+.form-select option {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.5;
+}
 
 .form-check-input {
   background-color: var(--bg-elevated);
@@ -255,7 +280,10 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opaci
   border-color: var(--accent);
 }
 
-.form-check-label { color: var(--text-muted); font-size: 0.875rem; }
+.form-check-label {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
 
 /* ---------- Table ---------- */
 .table {
@@ -275,7 +303,8 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opaci
   padding: 0.85rem 1rem;
 }
 
-.table-dark, .table-dark thead th {
+.table-dark,
+.table-dark thead th {
   background: var(--bg-elevated) !important;
   color: var(--text-muted) !important;
   border-color: var(--border) !important;
@@ -286,7 +315,9 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opaci
   border-bottom: 1px solid var(--border);
 }
 
-.table tbody tr:hover { background: rgba(108,99,255,0.05); }
+.table tbody tr:hover {
+  background: rgba(108, 99, 255, 0.05);
+}
 
 .table tbody td {
   padding: 0.85rem 1rem;
@@ -295,8 +326,8 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opaci
   font-size: 0.9rem;
 }
 
-.table-striped > tbody > tr:nth-of-type(odd) > * {
-  background: rgba(255,255,255,0.02);
+.table-striped>tbody>tr:nth-of-type(odd)>* {
+  background: rgba(255, 255, 255, 0.02);
   color: var(--text-primary);
 }
 
@@ -336,8 +367,14 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opaci
   border-left: 3px solid var(--info);
 }
 
-.btn-close { filter: invert(1); opacity: 0.5; }
-.btn-close:hover { opacity: 1; }
+.btn-close {
+  filter: invert(1);
+  opacity: 0.5;
+}
+
+.btn-close:hover {
+  opacity: 1;
+}
 
 /* ---------- Page Headings ---------- */
 .page-heading {
@@ -355,9 +392,9 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opaci
 /* ---------- Badge / Tag ---------- */
 .badge-exercise {
   display: inline-block;
-  background: rgba(108,99,255,0.15);
+  background: rgba(108, 99, 255, 0.15);
   color: var(--accent-light);
-  border: 1px solid rgba(108,99,255,0.3);
+  border: 1px solid rgba(108, 99, 255, 0.3);
   border-radius: 6px;
   padding: 2px 8px;
   font-size: 0.78rem;
@@ -411,8 +448,16 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opaci
   margin-bottom: 1.75rem;
 }
 
-.auth-link { color: var(--accent-light); text-decoration: none; font-weight: 600; }
-.auth-link:hover { color: #fff; text-decoration: underline; }
+.auth-link {
+  color: var(--accent-light);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.auth-link:hover {
+  color: #fff;
+  text-decoration: underline;
+}
 
 /* ---------- Stats page ---------- */
 .stats-chart-wrapper {
@@ -427,14 +472,22 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opaci
 .navbar-toggler {
   border-color: var(--border-strong);
 }
+
 .navbar-toggler-icon {
   filter: invert(1);
 }
 
 /* ---------- Micro-animations ---------- */
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(14px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .fade-up {
@@ -442,8 +495,15 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opaci
 }
 
 @keyframes scaleIn {
-  from { transform: scale(0.96); opacity: 0; }
-  to   { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(0.96);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .scale-in {
@@ -451,7 +511,105 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opaci
 }
 
 /* ---------- Scrollbar ---------- */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg-surface); }
-::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--text-subtle); }
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-subtle);
+}
+
+/* ---------- Fixed Workout Table ---------- */
+.workout-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.workout-table .col-exercise {
+  width: 25%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.workout-table .col-sets {
+  width: 35%;
+}
+
+.workout-table .col-notes {
+  width: 25%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.workout-table .col-actions {
+  width: 15%;
+}
+
+/* ---------- Date Label ---------- */
+.date-label {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.5rem;
+  padding-left: 2px;
+}
+
+/* ---------- Pagination Bar ---------- */
+.pagination-bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 4px;
+}
+
+.pg-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 34px;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--text-muted);
+  transition: all var(--transition);
+}
+
+.pg-btn:hover:not(.pg-active):not(.pg-disabled):not(.pg-dots) {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+}
+
+.pg-active {
+  background: linear-gradient(135deg, var(--accent), #8b5cf6);
+  color: #fff;
+  box-shadow: 0 2px 8px var(--accent-glow);
+}
+
+.pg-disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+.pg-dots {
+  cursor: default;
+  color: var(--text-subtle);
+  min-width: 24px;
+}

@@ -3,7 +3,7 @@
 
 {% block content %}
 
-{% if not workouts %}
+{% if not grouped %}
 <div class="empty-state fade-up">
     <div class="empty-icon">🏋️</div>
     <h4>No workouts yet</h4>
@@ -14,59 +14,100 @@
 </div>
 
 {% else %}
-<div class="d-flex justify-content-between align-items-center mb-4 fade-up">
-    <div>
-        <h1 class="page-heading mb-0">Your Workouts</h1>
-        <p class="page-subheading mt-1">{{ workouts | length }} session{{ 's' if workouts | length != 1 }}</p>
-    </div>
-    <a href="{{ url_for('main.add_workout') }}" class="btn btn-primary">
-        <i class="bi bi-plus-lg me-1"></i>Add Workout
-    </a>
+
+{% if week_start %}
+<div class="d-flex align-items-center gap-3 mb-3 fade-up">
+    <span style="font-size:0.8rem; font-weight:700; 
+                 color:var(--accent-light); text-transform:uppercase;
+                 letter-spacing:0.08em;">
+        Week of {{ week_start.strftime('%b %d') }} 
+        – {{ week_end.strftime('%b %d, %Y') }}
+    </span>
+    <div style="flex:1; height:1px; background:var(--border);"></div>
+    <span style="color:var(--text-muted); font-size:0.8rem;">
+        Week {{ page }} of {{ total_pages }}
+    </span>
+</div>
+{% endif %}
+
+{% for date, workouts in grouped.items() %}
+
+<div class="date-label fade-up">
+    <i class="bi bi-calendar3 me-1"></i>{{ date.strftime('%A, %B %d, %Y') }}
 </div>
 
-<div class="table-wrapper fade-up">
-<table class="table table-striped table-hover mb-0">
-    <thead>
-        <tr>
-            <th><i class="bi bi-calendar3 me-1"></i>Date</th>
-            <th><i class="bi bi-activity me-1"></i>Exercise</th>
-            <th><i class="bi bi-layers me-1"></i>Sets</th>
-            <th><i class="bi bi-chat-left-text me-1"></i>Notes</th>
-            <th style="width:140px;">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for workout in workouts | sort(attribute='date', reverse=True) %}
-        <tr>
-            <td><span style="color:var(--text-muted); font-size:0.85rem;">{{ workout.date }}</span></td>
-            <td><span class="badge-exercise">{{ workout.exercise.name }}</span></td>
-            <td>
-                {% for s in workout.sets | sort(attribute='set_number') %}
+<div class="table-wrapper fade-up mb-4">
+    <table class="workout-table table table-hover mb-0">
+        <thead>
+            <tr>
+                <th class="col-exercise"><i class="bi bi-activity me-1"></i>Exercise</th>
+                <th class="col-sets"><i class="bi bi-layers me-1"></i>Sets</th>
+                <th class="col-notes"><i class="bi bi-chat-left-text me-1"></i>Notes</th>
+                <th class="col-actions">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for workout in workouts %}
+            <tr>
+                <td class="col-exercise">
+                    <span class="badge-exercise">{{ workout.exercise.name }}</span>
+                </td>
+                <td class="col-sets">
+                    {% for s in workout.sets | sort(attribute='set_number') %}
                     <span class="badge-exercise" style="margin-right:4px;">
-                        {{ s.reps }}
-                        {% if s.weight %}× {{ s.weight }}kg{% endif %}
+                        {{ s.reps }}{% if s.weight %} × {{ s.weight }}kg{% endif %}
                     </span>
-                {% endfor %}
-            </td>
-            <td style="color:var(--text-muted); font-size:0.85rem;">{{ workout.comment }}</td>
-            <td class="d-flex gap-2">
-                <a href="{{ url_for('main.edit_workout', id=workout.id) }}"
-                   class="btn btn-sm btn-info">
-                    <i class="bi bi-pencil-fill"></i>
-                </a>
-                <form action="{{ url_for('main.delete_workout', id=workout.id) }}" method="POST"
-                      style="display:inline;">
-                    <button type="submit" class="btn btn-sm btn-danger"
-                            onclick="return confirm('Delete this workout?')">
-                        <i class="bi bi-trash-fill"></i>
-                    </button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+                    {% endfor %}
+                </td>
+                <td class="col-notes" style="color:var(--text-muted); font-size:0.85rem;">
+                    {{ workout.comment if workout.comment != '-' else '' }}
+                </td>
+                <td class="col-actions">
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('main.edit_workout', id=workout.id) }}" class="btn btn-sm btn-info">
+                            <i class="bi bi-pencil-fill"></i>
+                        </a>
+                        <form action="{{ url_for('main.delete_workout', id=workout.id) }}" method="POST"
+                            style="display:inline;">
+                            <button type="submit" class="btn btn-sm btn-danger"
+                                onclick="return confirm('Delete this workout?')">
+                                <i class="bi bi-trash-fill"></i>
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
+{% endfor %}
+
+<!-- Pagination -->
+{% if total_pages > 1 %}
+<div class="d-flex justify-content-center align-items-center gap-2 mt-4 fade-up">
+    
+    {% if page > 1 %}
+    <a href="{{ url_for('main.index', page=page-1) }}" class="btn btn-sm"
+       style="background:var(--bg-elevated);color:var(--text-muted);border:1px solid var(--border-strong);">
+        <i class="bi bi-arrow-left"></i> Prev
+    </a>
+    {% endif %}
+
+    <span style="color:var(--text-muted); font-size:0.85rem;">
+        Page {{ page }} of {{ total_pages }}
+    </span>
+
+    {% if page < total_pages %}
+    <a href="{{ url_for('main.index', page=page+1) }}" class="btn btn-sm"
+       style="background:var(--bg-elevated);color:var(--text-muted);border:1px solid var(--border-strong);">
+        Next <i class="bi bi-arrow-right"></i>
+    </a>
+    {% endif %}
+
+</div>
+{% endif %}
+
 {% endif %}
 
 {% endblock %}
