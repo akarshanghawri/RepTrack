@@ -167,34 +167,88 @@ def profile() :
 @main.route('/stats')
 @login_required
 def stats():
-    workouts = Workout.query.filter_by(user_id=current_user.id).all()
-
-    stats = {}
+    workouts = Workout.query.filter_by(user_id=current_user.id).order_by(Workout.date).all()
+    unique_dates = []
+    pr = defaultdict(list)
+    
     for workout in workouts :
-        exercise_name = workout.exercise.name
+        if workout.date not in unique_dates :
+            unique_dates.append(workout.date)
 
-        if exercise_name not in stats :
-            stats[exercise_name] = {"total_workouts" : 0, "total_reps": 0}
-        
-        stats[exercise_name]["total_workouts"] += 1 
+    # Streak logic 
+    longest_streak = 1
+    temp_streak = 1 
 
-        for workout_set in workout.sets:
-            stats[exercise_name]["total_reps"] += workout_set.reps
-
-    exercise_names = []
-    total_workouts = []
-    total_reps = []
-
-    # print(stats)
+    for i in range(len(unique_dates)-1) :
+        d1 = unique_dates[i]
+        d2 = unique_dates[i+1]
+        if d1 - d2 > timedelta(days=1) :
+            temp_streak += 1
+            longest_streak = max(longest_streak, temp_streak)
+        else :
+            temp_streak += 1
     
-    for name, data in stats.items() :
-        exercise_names.append(name)
-        total_workouts.append(data["total_workouts"])
-        total_reps.append(data["total_reps"])
+    today = date.today()
+    last_workout_date = unique_dates[-1]  
+
+    if (today - last_workout_date) > timedelta(days=1):
+        curr_streak = 0
+    else : 
+        curr_streak = 1
+        for i in range(len(unique_dates)-1, 0, -1):
+            diff = unique_dates[i] - unique_dates[i-1]
+            if diff == timedelta(days=1):
+                curr_streak += 1
+            else:
+                break
     
 
-    return render_template("stats.html", exercise_names=exercise_names,
-                                        total_workouts=total_workouts,total_reps=total_reps)
+    # Personal Records (pr)
+    pr = {}
+    for workout in workouts:
+        name = workout.exercise.name
+        for s in workout.sets:
+            if s.weight:
+                if name not in pr:
+                    pr[name] = s.weight
+                elif s.weight > pr[name]:
+                    pr[name] = s.weight
+
+    most_trained = {}
+    for workout in workouts:
+        name = workout.exercise.name
+        if name not in most_trained:
+            most_trained[name] = 0
+        most_trained[name] += 1
+    
+    most_trained = dict(sorted(most_trained.items(), key=lambda x: x[1], reverse=True))
+    
+    progress = {}
+    for workout in workouts:
+        name = workout.exercise.name
+
+        if name not in progress:
+            progress[name] = {"dates": [], "volumes": []}
+
+        best_volume = 0
+        for s in workout.sets:
+            if s.weight:
+                volume = s.reps * s.weight
+                if volume > best_volume:
+                    best_volume = volume
+
+        if best_volume > 0:
+            progress[name]["dates"].append(str(workout.date))
+            progress[name]["volumes"].append(best_volume)
+
+    # print(most_trained, progress)
+    
+    return render_template("stats.html", curr_streak  = curr_streak,
+                           longest_streak  = longest_streak,
+                           total_sessions  = len(workouts),
+                           pr              = pr,
+                           most_trained    = most_trained,
+                           progress        = progress)
 
 # @main.route('/new')
 # @login_required

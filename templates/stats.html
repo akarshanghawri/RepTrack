@@ -10,96 +10,108 @@
 <div class="d-flex justify-content-between align-items-center mb-4 fade-up">
     <div>
         <h1 class="page-heading mb-0">Your Stats</h1>
-        <p class="page-subheading mt-1">Total reps per exercise across all sessions</p>
     </div>
 </div>
 
-{% if exercise_names %}
+{% if progress %}
 
 <!-- Summary Cards -->
 <div class="row g-3 mb-4 fade-up">
-    <div class="col-sm-4">
+    <div class="col-sm-3">
         <div class="card p-3" style="border-left: 3px solid var(--accent);">
             <div style="color:var(--text-muted); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Exercises Tracked</div>
-            <div style="font-size:2rem; font-weight:800; color:var(--accent-light); margin-top:0.25rem;">{{ exercise_names | length }}</div>
+            <div style="font-size:2rem; font-weight:800; color:var(--accent-light); margin-top:0.25rem;">{{ progress | length }}</div>
         </div>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-2">
         <div class="card p-3" style="border-left: 3px solid var(--success);">
             <div style="color:var(--text-muted); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Total Sessions</div>
-            <div style="font-size:2rem; font-weight:800; color:#4ade80; margin-top:0.25rem;">{{ total_workouts | sum }}</div>
+            <div style="font-size:2rem; font-weight:800; color:#4ade80; margin-top:0.25rem;">{{ total_sessions }}</div>
         </div>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-3">
         <div class="card p-3" style="border-left: 3px solid var(--warning);">
-            <div style="color:var(--text-muted); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Total Reps Done</div>
-            <div style="font-size:2rem; font-weight:800; color:#fbbf24; margin-top:0.25rem;">{{ total_reps | sum }}</div>
+            <div style="color:var(--text-muted); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Most Trained</div>
+            {% for exercise, value in most_trained.items() %}
+                {% if loop.first %}
+                    <div style="font-size:1.3rem; font-weight:800; color:#fbbf24; margin-top:0.25rem;">
+                        {{ exercise }}
+                    </div>
+                    <div style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">
+                        {{ value }} sessions
+                    </div>
+                {% endif %}
+            {% endfor %}
         </div>
     </div>
+    <div class="col-sm-2">
+        <div class="card p-3" style="border-left: 3px solid var(--info);">
+            <div style="color:var(--text-muted); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Current Streak</div>
+            <div style="font-size:2rem; font-weight:800; color:var(--info); margin-top:0.25rem;">
+                {{ curr_streak }} 🔥
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-2">
+        <div class="card p-3" style="border-left: 3px solid var(--text-muted);">
+            <div style="color:var(--text-muted); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Longest Streak</div>
+            <div style="font-size:2rem; font-weight:800; color:var(--text-muted); margin-top:0.25rem;">
+                {{ longest_streak }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Exercise selector -->
+<div class="d-flex align-items-center gap-3 mb-3 fade-up">
+    <label style="color:var(--text-muted); font-size:0.85rem; font-weight:600; white-space:nowrap;">
+        Progress for
+    </label>
+    <select id="exerciseSelect" class="form-select" style="max-width:250px;">
+        {% for exercise in progress.keys() %}
+        <option value="{{ exercise }}">{{ exercise }}</option>
+        {% endfor %}
+    </select>
 </div>
 
 <!-- Chart -->
 <div class="stats-chart-wrapper fade-up">
-    <canvas id="workoutChart" height="100"></canvas>
+    <canvas id="progressChart" height="100"></canvas>
 </div>
 
-<script>
-const ctx = document.getElementById('workoutChart').getContext('2d');
-
-// Gradient fill
-const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-gradient.addColorStop(0, 'rgba(108, 99, 255, 0.6)');
-gradient.addColorStop(1, 'rgba(108, 99, 255, 0.05)');
-
-new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: {{ exercise_names | tojson }},
-        datasets: [{
-            label: 'Total Reps',
-            data: {{ total_reps | tojson }},
-            backgroundColor: gradient,
-            borderColor: 'rgba(140, 133, 255, 0.8)',
-            borderWidth: 1.5,
-            borderRadius: 6,
-            borderSkipped: false
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: {
-                labels: {
-                    color: '#8b93b0',
-                    font: { family: 'Inter', size: 12 }
-                }
-            },
-            tooltip: {
-                backgroundColor: '#1d2233',
-                borderColor: 'rgba(255,255,255,0.08)',
-                borderWidth: 1,
-                titleColor: '#f0f2ff',
-                bodyColor: '#8b93b0',
-                padding: 12,
-                callbacks: {
-                    label: (ctx) => ` ${ctx.parsed.y} total reps`
-                }
-            }
-        },
-        scales: {
-            x: {
-                grid: { color: 'rgba(255,255,255,0.04)' },
-                ticks: { color: '#8b93b0', font: { family: 'Inter', size: 11 } }
-            },
-            y: {
-                beginAtZero: true,
-                grid: { color: 'rgba(255,255,255,0.05)' },
-                ticks: { color: '#8b93b0', font: { family: 'Inter', size: 11 } }
-            }
-        }
-    }
-});
-</script>
+<!-- PR Table -->
+<div class="row g-3 mt-4 fade-up">
+    <div class="col-md-6">
+        <div class="card p-3">
+            <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; 
+                        letter-spacing:0.08em; color:var(--text-muted); margin-bottom:1rem;">
+                Personal Records
+            </div>
+            {% for exercise, weight in pr.items() %}
+            <div class="d-flex justify-content-between align-items-center py-2"
+                 style="border-bottom:1px solid var(--border);">
+                <span style="color:var(--text-primary); font-size:0.9rem;">{{ exercise }}</span>
+                <span style="color:var(--accent-light); font-weight:700;">{{ weight }} kg</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card p-3">
+            <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; 
+                        letter-spacing:0.08em; color:var(--text-muted); margin-bottom:1rem;">
+                Most Trained
+            </div>
+            {% for exercise, count in most_trained.items() %}
+            <div class="d-flex justify-content-between align-items-center py-2"
+                 style="border-bottom:1px solid var(--border);">
+                <span style="color:var(--text-primary); font-size:0.9rem;">{{ exercise }}</span>
+                <span style="color:#fbbf24; font-weight:700;">{{ count }} sessions</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 
 {% else %}
 <div class="empty-state fade-up">
@@ -111,5 +123,78 @@ new Chart(ctx, {
     </a>
 </div>
 {% endif %}
+
+
+<script>
+// Pass the entire progress dict from Flask to JS
+const progressData = {{ progress | tojson }};
+
+const ctx = document.getElementById('progressChart').getContext('2d');
+
+// Gradient
+const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+gradient.addColorStop(0, 'rgba(108, 99, 255, 0.4)');
+gradient.addColorStop(1, 'rgba(108, 99, 255, 0.02)');
+
+// Build initial chart with first exercise
+const firstExercise = Object.keys(progressData)[0];
+
+const chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: progressData[firstExercise].dates,
+        datasets: [{
+            label: firstExercise,
+            data: progressData[firstExercise].volumes,
+            borderColor: 'rgba(108, 99, 255, 0.9)',
+            backgroundColor: gradient,
+            borderWidth: 2,
+            pointBackgroundColor: '#8b85ff',
+            pointRadius: 5,
+            tension: 0.3,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                labels: { color: '#8b93b0', font: { family: 'Inter', size: 12 } }
+            },
+            tooltip: {
+                backgroundColor: '#1d2233',
+                borderColor: 'rgba(255,255,255,0.08)',
+                borderWidth: 1,
+                titleColor: '#f0f2ff',
+                bodyColor: '#8b93b0',
+                padding: 12,
+                callbacks: {
+                    label: (ctx) => ` Volume: ${ctx.parsed.y} (reps × kg)`
+                }
+            }
+        },
+        scales: {
+            x: {
+                grid: { color: 'rgba(255,255,255,0.04)' },
+                ticks: { color: '#8b93b0', font: { family: 'Inter', size: 11 } }
+            },
+            y: {
+                beginAtZero: false,
+                grid: { color: 'rgba(255,255,255,0.05)' },
+                ticks: { color: '#8b93b0', font: { family: 'Inter', size: 11 } }
+            }
+        }
+    }
+});
+
+// Update chart when exercise is selected
+document.getElementById('exerciseSelect').addEventListener('change', function() {
+    const selected = this.value;
+    chart.data.labels = progressData[selected].dates;
+    chart.data.datasets[0].data = progressData[selected].volumes;
+    chart.data.datasets[0].label = selected;
+    chart.update();  // ← re-renders the chart without full page reload
+})
+</script>
 
 {% endblock %}
