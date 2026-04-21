@@ -250,5 +250,28 @@ def stats():
                            most_trained    = most_trained,
                            progress        = progress)
 
+@main.route('/workout/<int:id>')
+@login_required
+def workout_detail(id) :
+    workout = Workout.query.get_or_404(id)
+
+    previous = (Workout.query.filter_by(user_id=current_user.id, exercise_id = workout.exercise_id)
+                .filter(Workout.date < workout.date)
+                .order_by(Workout.date.desc())
+                .first())
+    
+    all_workouts = Workout.query.filter_by(user_id = current_user.id, exercise_id=workout.exercise_id).all()
+
+    pr_weight = 0
+    for workout in all_workouts :
+        for set in workout.sets :
+            if set.weight and set.weight > pr_weight :
+                pr_weight = set.weight
+    
+    return render_template('workout_detail.html',
+                           workout = workout,
+                           previous = previous,
+                           pr_weight = pr_weight)
+
 # @main.route('/new')
 # @login_required

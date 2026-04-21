@@ -93,7 +93,7 @@
         }
     })
 
-    // Renumber "Set 1", "Set 2" etc after a removal
+    // Renumber "Set 1", "Set 2" after a removal
     function renumberSets() {
         container.querySelectorAll('.set-row').forEach((row, i) => {
             row.querySelector('span').textContent = `Set ${i + 1}`

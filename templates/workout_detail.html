@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% block title %}{{ workout.exercise.name }} – RepTrack{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+<div class="col-md-7 fade-up">
+
+    <!-- Header -->
+    <div class="d-flex align-items-center gap-2 mb-4">
+        <a href="{{ url_for('main.index') }}" class="btn btn-sm"
+           style="background:var(--bg-elevated);color:var(--text-muted);
+                  border:1px solid var(--border-strong);">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <div>
+            <h1 class="page-heading mb-0">{{ workout.exercise.name }}</h1>
+            <p class="page-subheading mb-0">
+                {{ workout.date.strftime('%A, %B %d, %Y') }}
+            </p>
+        </div>
+    </div>
+
+    <!-- Current Session -->
+    <div class="card p-4 mb-4">
+        <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase;
+                    letter-spacing:0.08em; color:var(--text-muted); margin-bottom:1rem;">
+            This Session
+        </div>
+
+        {% for s in workout.sets | sort(attribute='set_number') %}
+        <div class="d-flex align-items-center justify-content-between py-2"
+             style="border-bottom:1px solid var(--border);">
+            <span style="color:var(--text-muted); font-size:0.85rem; width:60px;">
+                Set {{ s.set_number }}
+            </span>
+            <span style="color:var(--text-primary); font-weight:600;">
+                {{ s.reps }} reps
+            </span>
+            <span style="color:var(--text-primary); font-weight:600;">
+                {% if s.weight %}{{ s.weight }} kg{% else %}—{% endif %}
+            </span>
+
+            <!-- PR badge -->
+            {% if s.weight and s.weight >= pr_weight and pr_weight > 0 %}
+            <span style="background:rgba(251,191,36,0.15); color:#fbbf24;
+                         border:1px solid rgba(251,191,36,0.3);
+                         border-radius:6px; padding:2px 8px;
+                         font-size:0.75rem; font-weight:700;">
+                🏆 PR
+            </span>
+            {% else %}
+            <span style="width:52px;"></span>
+            {% endif %}
+        </div>
+        {% endfor %}
+
+        {% if workout.comment and workout.comment != '-' %}
+        <div class="mt-3" style="color:var(--text-muted); font-size:0.875rem;">
+            <i class="bi bi-chat-left-text me-2"></i>{{ workout.comment }}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Previous Session -->
+    {% if previous %}
+    <div class="card p-4 mb-4"
+         style="border-color:rgba(255,255,255,0.05); opacity:0.75;">
+        <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase;
+                    letter-spacing:0.08em; color:var(--text-muted); margin-bottom:1rem;">
+            Previous Session — {{ previous.date.strftime('%B %d, %Y') }}
+        </div>
+
+        {% for s in previous.sets | sort(attribute='set_number') %}
+        <div class="d-flex align-items-center justify-content-between py-2"
+             style="border-bottom:1px solid var(--border);">
+            <span style="color:var(--text-muted); font-size:0.85rem; width:60px;">
+                Set {{ s.set_number }}
+            </span>
+            <span style="color:var(--text-muted);">{{ s.reps }} reps</span>
+            <span style="color:var(--text-muted);">
+                {% if s.weight %}{{ s.weight }} kg{% else %}—{% endif %}
+            </span>
+            <span style="width:52px;"></span>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div style="color:var(--text-muted); font-size:0.85rem; text-align:center;
+                padding:1rem;">
+        No previous session for this exercise.
+    </div>
+    {% endif %}
+
+    <!-- Actions -->
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('main.edit_workout', id=workout.id) }}"
+           class="btn btn-info btn-sm">
+            <i class="bi bi-pencil-fill me-1"></i>Edit
+        </a>
+        <form action="{{ url_for('main.delete_workout', id=workout.id) }}"
+              method="POST">
+            <button type="submit" class="btn btn-danger btn-sm"
+                    onclick="return confirm('Delete this workout?')">
+                <i class="bi bi-trash-fill me-1"></i>Delete
+            </button>
+        </form>
+    </div>
+
+</div>
+</div>
+{% endblock %}

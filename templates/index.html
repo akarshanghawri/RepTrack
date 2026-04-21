@@ -48,7 +48,8 @@
         </thead>
         <tbody>
             {% for workout in workouts %}
-            <tr>
+            <tr data-exercise="{{ workout.exercise.name }}"onclick="window.location='{{ url_for('main.workout_detail', id=workout.id) }}'"
+    style="cursor:pointer;">
                 <td class="col-exercise">
                     <span class="badge-exercise">{{ workout.exercise.name }}</span>
                 </td>
@@ -64,16 +65,19 @@
                 </td>
                 <td class="col-actions">
                     <div class="d-flex gap-2">
-                        <a href="{{ url_for('main.edit_workout', id=workout.id) }}" class="btn btn-sm btn-info">
+
+                    <!-- stopPropagation - prevents further propagation of the current event in the capturing and bubbling phases -->
+                        <a href="{{ url_for('main.edit_workout', id=workout.id) }}" class="btn btn-sm btn-info" onlick="event.stopPropagation()">
                             <i class="bi bi-pencil-fill"></i>
                         </a>
                         <form action="{{ url_for('main.delete_workout', id=workout.id) }}" method="POST"
-                            style="display:inline;">
+                            style="display:inline;" onlick="event.stopPropagation()">
                             <button type="submit" class="btn btn-sm btn-danger"
                                 onclick="return confirm('Delete this workout?')">
                                 <i class="bi bi-trash-fill"></i>
                             </button>
                         </form>
+                        
                     </div>
                 </td>
             </tr>
