@@ -11,9 +11,29 @@
     <a href="{{ url_for('main.add_workout') }}" class="btn btn-primary mt-4" style="padding: 0.65rem 1.8rem;">
         <i class="bi bi-plus-lg me-2"></i>Log Your First Workout
     </a>
+    <br><br>
+    <a href="{{ url_for('main.generate_plan') }}" class="btn btn-outline-primary">
+        <i class="bi bi-robot me-1"></i>AI Plan
+    </a>
 </div>
 
 {% else %}
+
+<div class="d-flex justify-content-between align-items-center mb-4 fade-up">
+    <div>
+        <h1 class="page-heading mb-0">Your Workouts</h1>
+        <p class="page-subheading mt-1">{{ total_weeks }} week{{ 's' if total_weeks != 1 }}</p>
+    </div>
+
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('main.generate_plan') }}" class="btn btn-outline-primary">
+            <i class="bi bi-robot me-1"></i>AI Plan
+        </a>
+        <a href="{{ url_for('main.add_workout') }}" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-1"></i>Add Workout
+        </a>
+    </div>
+</div>
 
 {% if week_start %}
 <div class="d-flex align-items-center gap-3 mb-3 fade-up">
@@ -67,17 +87,17 @@
                     <div class="d-flex gap-2">
 
                     <!-- stopPropagation - prevents further propagation of the current event in the capturing and bubbling phases -->
-                        <a href="{{ url_for('main.edit_workout', id=workout.id) }}" class="btn btn-sm btn-info" onlick="event.stopPropagation()">
+                        <a href="{{ url_for('main.edit_workout', id=workout.id) }}" class="btn btn-sm btn-info" onclick="event.stopPropagation()">
                             <i class="bi bi-pencil-fill"></i>
                         </a>
                         <form action="{{ url_for('main.delete_workout', id=workout.id) }}" method="POST"
-                            style="display:inline;" onlick="event.stopPropagation()">
+                            style="display:inline;" onclick="event.stopPropagation()">
                             <button type="submit" class="btn btn-sm btn-danger"
                                 onclick="return confirm('Delete this workout?')">
                                 <i class="bi bi-trash-fill"></i>
                             </button>
                         </form>
-                        
+
                     </div>
                 </td>
             </tr>

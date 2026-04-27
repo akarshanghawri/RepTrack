@@ -273,5 +273,119 @@ def workout_detail(id) :
                            previous = previous,
                            pr_weight = pr_weight)
 
-# @main.route('/new')
-# @login_required
+from groq import Groq
+import os 
+
+@main.route('/plan', methods=['GET', 'POST'])
+@login_required
+def generate_plan():
+    if request.method == 'POST':
+        
+        # All form data of user
+
+        height = request.form.get('height')
+        weight = request.form.get('weight')
+        age = request.form.get('age')
+        gender = request.form.get('gender')
+        occupation = request.form.get('occupation')
+        activity_level = request.form.get('activity_level')
+
+        primary_goal = request.form.get('primary_goal')
+        secondary_goal = request.form.get('secondary_goal')
+        target_weight = request.form.get('target_weight')
+        timeframe = request.form.get('timeframe')
+
+        days_per_week = request.form.get('days')
+        duration = request.form.get('duration')
+        days_per_week = request.form.get('days')
+
+        experience = request.form.get('experience')
+        equipment = request.form.get('equipment')
+        diet = request.form.get('diet')
+        preferred_time = request.form.get('preferred_time')
+
+        sleep = request.form.get('sleep')
+        injuries = request.form.get('injuries')
+        stress = request.form.get('stress')
+
+        # prompt for generating the plan
+        prompt = f"""
+            You are a certified fitness coach and strength & conditioning expert.
+            Create a personalized workout plan using the following user details.
+
+            USER PROFILE
+            Age: {age}
+            Gender: {gender}
+            Height: {height} cm
+            Weight: {weight} kg
+            Occupation: {occupation}
+            Daily activity level: {activity_level}
+
+            FITNESS GOALS
+            Primary goal: {primary_goal}
+            Secondary goal: {secondary_goal}
+            Target weight: {target_weight} kg
+            Timeframe: {timeframe}
+
+            EXPERIENCE LEVEL
+            {experience}
+
+            AVAILABILITY
+            Workout frequency: {days_per_week} days per week
+            Session duration: {duration} minutes
+            Preferred workout time: {preferred_time}
+
+            WORKOUT ENVIRONMENT
+            Equipment available: {equipment}
+
+            HEALTH CONSIDERATIONS
+            Injuries or concerns: {injuries}
+
+            LIFESTYLE
+            Sleep: {sleep} hours/night
+            Stress level: {stress}
+            Diet type: {diet}
+
+            OUTPUT REQUIREMENTS
+            1. Create a structured weekly workout split.
+            2. Include exercises, sets, reps, rest time, and estimated duration.
+            3. Add warm-up and cooldown recommendations.
+            4. Include progression strategy for the full timeframe.
+            5. Suggest beginner-friendly weights and intensity guidance.
+            6. Provide injury prevention tips based on health considerations.
+            7. Keep instructions practical, clear, and beginner-friendly.
+            8. Add optional cardio recommendations.
+            9. Provide weekly progression checkpoints.
+
+            IMPORTANT: Return ONLY a complete HTML document starting with <!DOCTYPE html>.
+            Use inline CSS for styling. Clean modern look with tables where helpful.
+            No markdown. No code blocks. No explanation outside the HTML.
+            Use the current year {date.today().year} for any copyright or date references.
+
+            STRICT RULES:
+            - Always use a white background with dark text
+            - Always include a weekly table as the first section
+            - Always use the exact same section order:
+            1. Weekly Split Table
+            2. Exercise Details
+            3. Nutrition
+            4. Progression Plan
+            - Never skip any section
+         """
+
+        # 3. call API
+        client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+
+        response = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=4096,
+            temperature=0       # to stop the randomness
+        )
+        
+        reply = response.choices[0].message.content
+    
+
+        return render_template("plan_result.html", reply=reply)
+    
+    return render_template("generate_plan.html")

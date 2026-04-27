@@ -2,8 +2,10 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
+from dotenv import load_dotenv
 import os 
 
+load_dotenv()
 db = SQLAlchemy()
 login_manager = LoginManager()
 
@@ -11,7 +13,7 @@ def create_app() :
     app = Flask(__name__, instance_relative_config=True)
 
     app.config.from_mapping(
-        SECRET_KEY="secretKey",
+        SECRET_KEY=os.environ.get("SECRET_KEY"),
         SQLALCHEMY_DATABASE_URI="sqlite:///db.sqlite"
     )
 

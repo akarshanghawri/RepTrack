@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Your Plan – RepTrack{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 fade-up">
+    <div>
+        <h1 class="page-heading mb-0">Your Fitness Plan</h1>
+        <p class="page-subheading mt-1">Generated just for you</p>
+    </div>
+    <a href="{{ url_for('main.generate_plan') }}" class="btn btn-outline-primary btn-sm">
+        <i class="bi bi-arrow-repeat me-1"></i>Regenerate
+    </a>
+</div>
+
+<div class="card p-0 overflow-hidden fade-up">
+    <iframe id="planFrame" style="width:100%; border:none; min-height:600px;"></iframe>
+</div>
+
+<script>
+    const html = {{ reply | tojson }};
+    const iframe = document.getElementById('planFrame');
+    iframe.srcdoc = html;
+    iframe.onload = function() {
+        iframe.style.height = iframe.contentDocument.body.scrollHeight + 40 + 'px';
+    };
+</script>
+{% endblock %}
