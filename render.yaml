@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: reptrack
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi:app
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: reptrack-db
+          property: connectionString
+
+databases:
+  - name: reptrack-db
+    plan: free

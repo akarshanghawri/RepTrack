@@ -4,7 +4,7 @@ from sqlalchemy import func
 from collections import defaultdict
 from .models import User,Workout,Exercise, WorkoutSet
 from datetime import date, datetime, timedelta
-from .import db
+from . import db
 
 main = Blueprint('main', __name__)
 
@@ -280,7 +280,7 @@ import os
 @login_required
 def generate_plan():
     if request.method == 'POST':
-        
+
         # All form data of user
 
         height = request.form.get('height')
