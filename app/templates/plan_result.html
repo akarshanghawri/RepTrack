@@ -5,11 +5,19 @@
 <div class="d-flex justify-content-between align-items-center mb-4 fade-up">
     <div>
         <h1 class="page-heading mb-0">Your Fitness Plan</h1>
-        <p class="page-subheading mt-1">Generated just for you</p>
+        <p class="page-subheading mt-1">
+            Generated on {{ plan.created_at.strftime('%B %d, %Y') }}
+        </p>
     </div>
-    <a href="{{ url_for('main.generate_plan') }}" class="btn btn-outline-primary btn-sm">
-        <i class="bi bi-arrow-repeat me-1"></i>Regenerate
-    </a>
+    <div class="d-flex gap-2">
+        <button onclick="window.print()" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-file-pdf me-1"></i>Save as PDF
+        </button>
+        <a href="{{ url_for('main.generate_plan') }}?regenerate=1" 
+           class="btn btn-primary btn-sm">
+            <i class="bi bi-arrow-repeat me-1"></i>Regenerate
+        </a>
+    </div>
 </div>
 
 <div class="card p-0 overflow-hidden fade-up">
@@ -17,7 +25,7 @@
 </div>
 
 <script>
-    const html = {{ reply | tojson }};
+    const html = {{ plan.html | tojson }};
     const iframe = document.getElementById('planFrame');
     iframe.srcdoc = html;
     iframe.onload = function() {

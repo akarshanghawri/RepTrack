@@ -613,3 +613,67 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   color: var(--text-subtle);
   min-width: 24px;
 }
+
+@media print {
+    nav, .btn, .page-heading, .page-subheading, .card {
+        display: none !important;
+    }
+    iframe {
+        width: 100% !important;
+        height: auto !important;
+        border: none !important;
+    }
+}
+
+/* Light theme */
+html.light {
+    --bg-base:      #f5f5f5;
+    --bg-surface:   #ffffff;
+    --bg-elevated:  #f0f0f0;
+    --bg-card:      #ffffff;
+    --text-primary: #1a1a2e;
+    --text-muted:   #555577;
+    --text-subtle:  #888899;
+    --border:       rgba(0,0,0,0.08);
+    --border-strong:rgba(0,0,0,0.15);
+    --shadow-card:  0 4px 24px rgba(0,0,0,0.08);
+}
+
+html.light .table tbody td {
+    background-color: transparent;
+    color: var(--text-primary);
+}
+
+html.light .table tbody tr:nth-of-type(odd) > * {
+    background-color: rgba(0,0,0,0.02);
+    color: var(--text-primary);
+}
+
+html.light .table thead th {
+    background: var(--bg-elevated);
+    color: var(--text-muted);
+}
+
+html.light .table-wrapper {
+    background: var(--bg-card);
+    border-color: var(--border);
+}
+
+html.light .badge-exercise {
+    background: rgba(108,99,255,0.1);
+    color: #4f44e2;
+    border-color: rgba(108,99,255,0.25);
+}
+
+html.light .card {
+    background: var(--bg-card);
+    border-color: var(--border);
+}
+
+html.light .navbar {
+    background: rgba(255,255,255,0.92) !important;
+}
+
+html.light .btn-close {
+    filter: none;
+}

@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, url_for, redirect, request, flash
 from flask_login import login_required, current_user
 from sqlalchemy import func 
 from collections import defaultdict
-from .models import User,Workout,Exercise, WorkoutSet
+from .models import User,Workout,Exercise, WorkoutSet, Plan
 from datetime import date, datetime, timedelta
 from . import db
 
@@ -373,19 +373,49 @@ def generate_plan():
             - Never skip any section
          """
 
-        # 3. call API
-        client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+        try:
+            client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+            response = client.chat.completions.create(
+                model="llama-3.1-8b-instant",
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=4096,
+                temperature=0
+            )
+            reply = response.choices[0].message.content
 
-        response = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=4096,
-            temperature=0       # to stop the randomness
-        )
-        
-        reply = response.choices[0].message.content
-    
+            # Save or overwrite plan
+            existing_plan = Plan.query.filter_by(user_id=current_user.id).first()
+            if existing_plan:
+                existing_plan.html       = reply
+                existing_plan.created_at = datetime.now()
+            else:
+                new_plan = Plan(
+                    html       = reply,
+                    created_at = datetime.now(),
+                    user_id    = current_user.id
+                )
+                db.session.add(new_plan)
 
-        return render_template("plan_result.html", reply=reply)
-    
+            db.session.commit()
+            return redirect(url_for('main.plan_result'))
+
+        except Exception as e:
+
+            flash(f"Error generating plan: {str(e)}", "danger")
+            return redirect(url_for('main.generate_plan'))
+
+    # GET — check if plan exists
+    regenerate = request.args.get('regenerate')
+    existing_plan = Plan.query.filter_by(user_id=current_user.id).first()
+    if existing_plan and not regenerate:
+        return redirect(url_for('main.plan_result'))
+
     return render_template("generate_plan.html")
+
+@main.route('/plan/result')
+@login_required
+def plan_result():
+    plan = Plan.query.filter_by(user_id=current_user.id).first_or_404()
+    return render_template("plan_result.html", plan=plan)
+
+

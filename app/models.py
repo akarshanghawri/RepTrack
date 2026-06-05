@@ -40,3 +40,9 @@ class Exercise(db.Model) :
     # Null if user has created no new exercises
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     workouts = db.relationship('Workout', backref='exercise', lazy=True)
+
+class Plan(db.Model):
+    id         = db.Column(db.Integer, primary_key=True)
+    html       = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False)
+    user_id    = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
