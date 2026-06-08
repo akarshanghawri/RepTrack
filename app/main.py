@@ -108,7 +108,7 @@ def add_workout() :
 
         db.session.commit()
 
-        flash("Workout added successfully", "success")
+        flash("Let's go! Workout locked in 🔥", "success")
         return redirect(url_for('main.index'))
 
     return render_template("add_workout.html", exercises=exercises)
@@ -142,7 +142,7 @@ def edit_workout(id) :
                 db.session.add(workout_set)
 
         db.session.commit()
-        flash("Workout updated successfully", "success")
+        flash("Updated, Every rep counts 💪", "success")
 
         return redirect(url_for('main.index'))
 
@@ -156,7 +156,7 @@ def delete_workout(id) :
     db.session.delete(workout)
     db.session.commit()
 
-    flash("Workout Deleted", "success")
+    flash("Gone, We don't talk about rest days 😤", "success")
     return redirect(url_for('main.index'))
 
 @main.route('/profile')
@@ -168,6 +168,10 @@ def profile() :
 @login_required
 def stats():
     workouts = Workout.query.filter_by(user_id=current_user.id).order_by(Workout.date).all()
+
+    if not workouts:
+        return render_template("stats.html", no_data=True)
+    
     unique_dates = []
     pr = defaultdict(list)
     

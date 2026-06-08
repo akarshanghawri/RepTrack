@@ -10,7 +10,7 @@
         </p>
     </div>
     <div class="d-flex gap-2">
-        <button onclick="window.print()" class="btn btn-outline-primary btn-sm">
+        <button onclick="openAndPrint()" class="btn btn-outline-primary btn-sm">
             <i class="bi bi-file-pdf me-1"></i>Save as PDF
         </button>
         <a href="{{ url_for('main.generate_plan') }}?regenerate=1" 
@@ -31,5 +31,15 @@
     iframe.onload = function() {
         iframe.style.height = iframe.contentDocument.body.scrollHeight + 40 + 'px';
     };
+    
+    function openAndPrint() {
+        const iframe = document.getElementById('planFrame')
+        const html = iframe.srcdoc
+        const newTab = window.open('', '_blank')
+        newTab.document.write(html)
+        newTab.document.close()
+        newTab.focus()
+        setTimeout(() => newTab.print(), 500)
+    }
 </script>
 {% endblock %}

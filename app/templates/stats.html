@@ -13,7 +13,16 @@
     </div>
 </div>
 
-{% if progress %}
+{% if no_data %}
+<div class="empty-state fade-up">
+    <div class="empty-icon">📊</div>
+    <h4>Hit the gym first</h4>
+    <p>You can't see stats without any data 😝</p>
+    <a href="{{ url_for('main.add_workout') }}" class="btn btn-primary mt-4">
+        <i class="bi bi-plus-lg me-2"></i>Add First Workout
+    </a>
+</div>
+{% else %}
 
 <!-- Summary Cards -->
 <div class="row g-3 mb-4 fade-up">
@@ -113,88 +122,78 @@
     </div>
 </div>
 
-{% else %}
-<div class="empty-state fade-up">
-    <div class="empty-icon">📊</div>
-    <h4>No data yet</h4>
-    <p>Log some workouts to see your stats here.</p>
-    <a href="{{ url_for('main.add_workout') }}" class="btn btn-primary mt-4">
-        <i class="bi bi-plus-lg me-2"></i>Add First Workout
-    </a>
-</div>
-{% endif %}
-
-
 <script>
-// Pass the entire progress dict from Flask to JS
-const progressData = {{ progress | tojson }};
-
-const ctx = document.getElementById('progressChart').getContext('2d');
-
-// Gradient
-const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-gradient.addColorStop(0, 'rgba(108, 99, 255, 0.4)');
-gradient.addColorStop(1, 'rgba(108, 99, 255, 0.02)');
-
-// Build initial chart with first exercise
-const firstExercise = Object.keys(progressData)[0];
-
-const chart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: progressData[firstExercise].dates,
-        datasets: [{
-            label: firstExercise,
-            data: progressData[firstExercise].volumes,
-            borderColor: 'rgba(108, 99, 255, 0.9)',
-            backgroundColor: gradient,
-            borderWidth: 2,
-            pointBackgroundColor: '#8b85ff',
-            pointRadius: 5,
-            tension: 0.3,
-            fill: true
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: {
-                labels: { color: '#8b93b0', font: { family: 'Inter', size: 12 } }
+    // Pass the entire progress dict from Flask to JS
+    const progressData = {{ progress | tojson }};
+    
+    const ctx = document.getElementById('progressChart').getContext('2d');
+    
+    // Gradient
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(108, 99, 255, 0.4)');
+    gradient.addColorStop(1, 'rgba(108, 99, 255, 0.02)');
+    
+    // Build initial chart with first exercise
+    const firstExercise = Object.keys(progressData)[0];
+    
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: progressData[firstExercise].dates,
+            datasets: [{
+                label: firstExercise,
+                data: progressData[firstExercise].volumes,
+                borderColor: 'rgba(108, 99, 255, 0.9)',
+                backgroundColor: gradient,
+                borderWidth: 2,
+                pointBackgroundColor: '#8b85ff',
+                pointRadius: 5,
+                tension: 0.3,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    labels: { color: '#8b93b0', font: { family: 'Inter', size: 12 } }
+                },
+                tooltip: {
+                    backgroundColor: '#1d2233',
+                    borderColor: 'rgba(255,255,255,0.08)',
+                    borderWidth: 1,
+                    titleColor: '#f0f2ff',
+                    bodyColor: '#8b93b0',
+                    padding: 12,
+                    callbacks: {
+                        label: (ctx) => ` Volume: ${ctx.parsed.y} (reps × kg)`
+                    }
+                }
             },
-            tooltip: {
-                backgroundColor: '#1d2233',
-                borderColor: 'rgba(255,255,255,0.08)',
-                borderWidth: 1,
-                titleColor: '#f0f2ff',
-                bodyColor: '#8b93b0',
-                padding: 12,
-                callbacks: {
-                    label: (ctx) => ` Volume: ${ctx.parsed.y} (reps × kg)`
+            scales: {
+                x: {
+                    grid: { color: 'rgba(255,255,255,0.04)' },
+                    ticks: { color: '#8b93b0', font: { family: 'Inter', size: 11 } }
+                },
+                y: {
+                    beginAtZero: false,
+                    grid: { color: 'rgba(255,255,255,0.05)' },
+                    ticks: { color: '#8b93b0', font: { family: 'Inter', size: 11 } }
                 }
             }
-        },
-        scales: {
-            x: {
-                grid: { color: 'rgba(255,255,255,0.04)' },
-                ticks: { color: '#8b93b0', font: { family: 'Inter', size: 11 } }
-            },
-            y: {
-                beginAtZero: false,
-                grid: { color: 'rgba(255,255,255,0.05)' },
-                ticks: { color: '#8b93b0', font: { family: 'Inter', size: 11 } }
-            }
         }
-    }
-});
-
-// Update chart when exercise is selected
-document.getElementById('exerciseSelect').addEventListener('change', function() {
-    const selected = this.value;
-    chart.data.labels = progressData[selected].dates;
-    chart.data.datasets[0].data = progressData[selected].volumes;
-    chart.data.datasets[0].label = selected;
-    chart.update();  // ← re-renders the chart without full page reload
-})
+    });
+    
+    // Update chart when exercise is selected
+    document.getElementById('exerciseSelect').addEventListener('change', function() {
+        const selected = this.value;
+        chart.data.labels = progressData[selected].dates;
+        chart.data.datasets[0].data = progressData[selected].volumes;
+        chart.data.datasets[0].label = selected;
+        chart.update();  // ← re-renders the chart without full page reload
+    })
 </script>
+
+{% endif %}
 
 {% endblock %}

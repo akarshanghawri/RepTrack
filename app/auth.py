@@ -54,7 +54,7 @@ def login() :
             flash("invalid username or password", "danger")
             return redirect(url_for('auth.login'))
         
-        flash("You have been logged in", "success")
+        flash("Welcome back, Time to lock in 👊", "success")
         login_user(user, remember=bool(remember))
         return redirect(url_for('main.index'))
 
@@ -64,6 +64,6 @@ def login() :
 @login_required
 def logout() :
     logout_user()
-    flash("You have been logged out","success")
+    flash("Remember to login again, Don't skip 👋","success")
     return redirect(url_for('auth.login'))
 
